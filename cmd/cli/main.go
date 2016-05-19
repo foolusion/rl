@@ -20,33 +20,40 @@ func main() {
 	}
 	defer termbox.Close()
 
-	g := &rl.Game{
-		Player: rl.Player{
-			Position: rl.Vector{10, 10, 0, 0},
-		},
-	}
+	hc := humanController{}
+
+	g := rl.NewGame(hc)
 
 	draw(g)
 
-mainloop:
 	for {
-		switch ev := termbox.PollEvent(); ev.Type {
-		case termbox.EventKey:
-			switch ev.Key {
-			case termbox.KeyEsc:
-				break mainloop
-			case termbox.KeyArrowLeft:
-				rl.Move(g, [4]int{-1, 0, 0, 0})
-			case termbox.KeyArrowRight:
-				rl.Move(g, [4]int{1, 0, 0, 0})
-			case termbox.KeyArrowUp:
-				rl.Move(g, [4]int{0, -1, 0, 0})
-			case termbox.KeyArrowDown:
-				rl.Move(g, [4]int{0, 1, 0, 0})
-			}
-		case termbox.EventError:
-			log.Fatal(err)
+		quit := g.Step()
+		if quit {
+			return
 		}
 		draw(g)
 	}
+}
+
+type humanController struct{}
+
+func (h humanController) Get() rl.Action {
+	switch ev := termbox.PollEvent(); ev.Type {
+	case termbox.EventKey:
+		switch ev.Key {
+		case termbox.KeyEsc:
+			return rl.Quit
+		case termbox.KeyArrowLeft:
+			return rl.MoveLeft
+		case termbox.KeyArrowRight:
+			return rl.MoveRight
+		case termbox.KeyArrowUp:
+			return rl.MoveUp
+		case termbox.KeyArrowDown:
+			return rl.MoveDown
+		}
+	case termbox.EventError:
+		log.Fatal(ev.Err)
+	}
+	return nil
 }
