@@ -9,7 +9,7 @@ import (
 
 func draw(g *rl.Game) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	termbox.SetCell(g.Player.Position.X(), g.Player.Position.Y(), '@', termbox.ColorDefault, termbox.ColorDefault)
+	termbox.SetCell(g.Positions[0].X(), g.Positions[0].Y(), '@', termbox.ColorDefault, termbox.ColorDefault)
 	termbox.Flush()
 }
 
